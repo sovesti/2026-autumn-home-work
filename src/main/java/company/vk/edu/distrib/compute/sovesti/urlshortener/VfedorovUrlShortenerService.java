@@ -57,7 +57,8 @@ public final class VfedorovUrlShortenerService implements UrlShortenerService {
     }
 
     private Dao<String> createDao(String key) throws IOException {
-        Dao<String> dao = new InFileDao(key);
+        InFileDao dao = new InFileDao(key);
+        dao.read();
         daos.add(dao);
         return dao;
     }
