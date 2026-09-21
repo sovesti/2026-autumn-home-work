@@ -84,7 +84,9 @@ public final class VfedorovUrlShortenerService implements UrlShortenerService {
         try {
             dao.close();
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            if (logger.isErrorEnabled()) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
