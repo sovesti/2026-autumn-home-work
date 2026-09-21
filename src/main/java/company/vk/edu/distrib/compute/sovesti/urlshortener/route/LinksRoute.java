@@ -40,20 +40,20 @@ public final class LinksRoute implements HttpRoute {
     }
 
     private void post(HttpExchange exchange) throws IOException {
-        ensureHtmlUtf8(exchange);
+        new HtmlUtf8().orThrow(exchange);
         String id = ids.get();
         links.upsert(id, linkFromBody(exchange));
-        respondHtmlUtf8(exchange);
+        new HtmlUtf8().respond(exchange);
         new Response(StatusCodeConstants.CREATED, new ResponseBody.Plain(shortenedUrl(exchange, id))).accept(exchange);
     }
 
     private void get(HttpExchange exchange) throws IOException {
-        respondHtmlUtf8(exchange);
+        new HtmlUtf8().respond(exchange);
         new Response(StatusCodeConstants.OK, new ResponseBody.Plain(linkFromDao(exchange))).accept(exchange);
     }
 
     private void put(HttpExchange exchange) throws IOException {
-        ensureHtmlUtf8(exchange);
+        new HtmlUtf8().orThrow(exchange);
         linkFromDao(exchange);
         links.upsert(linkId(exchange), linkFromBody(exchange));
         new Response(StatusCodeConstants.OK).accept(exchange);
@@ -62,14 +62,6 @@ public final class LinksRoute implements HttpRoute {
     private void delete(HttpExchange exchange) throws IOException {
         links.delete(linkId(exchange));
         new Response(StatusCodeConstants.ACCEPTED).accept(exchange);
-    }
-
-    private void ensureHtmlUtf8(HttpExchange exchange) {
-        new HtmlUtf8().orThrow(exchange);
-    }
-
-    private void respondHtmlUtf8(HttpExchange exchange) {
-        new HtmlUtf8().respond(exchange);
     }
 
     private String shortenedUrl(HttpExchange exchange, String id) {
