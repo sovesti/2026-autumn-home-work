@@ -1,11 +1,12 @@
 package company.vk.edu.distrib.compute.sovesti.urlshortener.dao;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -13,24 +14,24 @@ import company.vk.edu.distrib.compute.Dao;
 
 public final class InFileDao implements Dao<String> {
 
-    private final File file;
+    private final Path path;
     private final PrintWriter write;
     private final DaoOperations operations;
     private final Dao<String> memory;
 
-    public InFileDao(File file) throws IOException {
-        this.file = Objects.requireNonNull(file);
-        write = new PrintWriter(new FileWriter(file, true), true);
+    public InFileDao(Path path) throws IOException {
+        this.path = Objects.requireNonNull(path);
+        write = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.APPEND), true);
         operations = new DaoOperations();
         memory = new InMemoryDao<>();
     }
 
     public InFileDao(String path) throws IOException {
-        this(new File(path));
+        this(Paths.get(path));
     }
 
     public void read() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
             operations.fill(reader.lines());
         }
         operations.execute(memory);

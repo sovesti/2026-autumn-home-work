@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -13,12 +14,12 @@ import company.vk.edu.distrib.compute.Dao;
 final class DaoOperations {
 
     private final Collection<DaoOperation> operations = new ConcurrentLinkedQueue<>();
-    private final Map<String, Function<String, DaoOperation>> parseable = Map.of( //
+    private final Map<String, Function<String, DaoOperation>> parseable = Map.of(//
         DaoOperation.UPSERT, this::parseUpsert, //
         DaoOperation.DELETE, DaoOperation.Delete::new);
 
     void fill(Stream<String> raw) {
-        raw.map(KeyValuePair::new).map(this::parse).forEach(this::add);
+        raw.map(KeyValuePair::new).map(this::parse).flatMap(Optional::stream).forEach(this::add);
     }
 
     void add(DaoOperation operation) {
@@ -31,8 +32,8 @@ final class DaoOperations {
         }
     }
 
-    private DaoOperation parse(KeyValuePair row) {
-        return parseable.get(row.key()).apply(row.value());
+    private Optional<DaoOperation> parse(KeyValuePair row) {
+        return Optional.ofNullable(parseable.get(row.key())).map(parse -> parse.apply(row.value()));
     }
 
     private DaoOperation parseUpsert(String raw) {

@@ -1,9 +1,9 @@
 package company.vk.edu.distrib.compute.sovesti.urlshortener.handler;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -12,7 +12,7 @@ import com.sun.net.httpserver.Request;
 
 public final class HandlersSwitch implements HttpHandler {
 
-    private final Map<Predicate<Request>, HttpHandler> handlers = new LinkedHashMap<>();
+    private final Map<Predicate<Request>, HttpHandler> handlers = new ConcurrentHashMap<>();
 
     public HandlersSwitch with(String method, HttpHandler handler) {
         return with(new MethodIs(method), handler);

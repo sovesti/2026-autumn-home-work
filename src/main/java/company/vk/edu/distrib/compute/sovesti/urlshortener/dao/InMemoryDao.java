@@ -14,6 +14,7 @@ public final class InMemoryDao<T> implements Dao<T> {
 
     @Override
     public void close() throws IOException {
+        // ignore
     }
 
     @Override

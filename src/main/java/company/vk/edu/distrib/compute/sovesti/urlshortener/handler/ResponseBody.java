@@ -13,6 +13,7 @@ public interface ResponseBody {
 
         @Override
         public void write(OutputStream out) throws IOException {
+            // ignore
         }
 
         @Override

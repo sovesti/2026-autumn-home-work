@@ -15,7 +15,7 @@ import com.sun.net.httpserver.HttpServer;
 import company.vk.edu.distrib.compute.Dao;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.BasicAuthentication;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationScheme;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.HttpAuthentication;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.Authentication;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.dao.InFileDao;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.WriteResponse;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.route.HttpRoute;
@@ -63,7 +63,7 @@ public final class VfedorovUrlShortenerService implements UrlShortenerService {
     }
 
     private void createAuthenticatedContext(HttpRoute route, AuthenticationScheme authentication) {
-        createContext(route, authentication).getFilters().add(new HttpAuthentication(authentication));
+        createContext(route, authentication).getFilters().add(new Authentication(authentication));
     }
 
     private HttpContext createContext(HttpRoute route, AuthenticationScheme authentication) {

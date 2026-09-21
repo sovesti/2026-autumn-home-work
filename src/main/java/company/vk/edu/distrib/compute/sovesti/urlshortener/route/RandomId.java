@@ -7,30 +7,29 @@ import java.util.stream.Stream;
 final class RandomId implements Supplier<String> {
 
     private final Random random = new Random();
-    private final String alphanum = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
-    private final int size = 10;
+    private static final String ALPHANUM = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+    private static final int SIZE = 10;
 
     @Override
     public String get() {
         return Stream.generate(this::randomChar)
-            .limit(size)
+            .limit(SIZE)
             .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
             .toString();
     }
 
     String throwIfInvalid(String id) {
-        if (size != id.length() || !id.chars().allMatch(this::valid)) {
+        if (SIZE != id.length() || !id.chars().allMatch(this::valid)) {
             throw new IllegalArgumentException("Invalid id: %s".formatted(id));
-        } else {
-            return id;
         }
+        return id;
     }
 
     private boolean valid(int character) {
-        return alphanum.chars().anyMatch(valid -> character == valid);
+        return ALPHANUM.chars().anyMatch(valid -> character == valid);
     }
 
     private char randomChar() {
-        return alphanum.charAt(random.nextInt(alphanum.length()));
+        return ALPHANUM.charAt(random.nextInt(ALPHANUM.length()));
     }
 }

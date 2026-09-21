@@ -9,7 +9,8 @@ import com.sun.net.httpserver.Request;
 
 import company.vk.edu.distrib.compute.Dao;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.dao.KeyValuePair;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Http;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.AuthenticationConstants;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.HeaderConstants;
 
 public final class BasicAuthentication implements AuthenticationScheme {
 
@@ -23,7 +24,7 @@ public final class BasicAuthentication implements AuthenticationScheme {
 
     @Override
     public Optional<AuthenticationScheme.Credentials> parse(Request request) {
-        return Optional.ofNullable(request.getRequestHeaders().getFirst(Http.Header.Authorization))
+        return Optional.ofNullable(request.getRequestHeaders().getFirst(HeaderConstants.AUTHORIZATION))
             .map(this::token)
             .map(Base64.getDecoder()::decode)
             .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
@@ -34,7 +35,7 @@ public final class BasicAuthentication implements AuthenticationScheme {
 
     private String token(String value) {
         KeyValuePair auth = new KeyValuePair(value, ' ');
-        if (!auth.valid() || !Http.Authentication.Basic.equals(auth.key())) {
+        if (!auth.valid() || !AuthenticationConstants.BASIC.equals(auth.key())) {
             throw new AuthenticationException();
         }
         return auth.value();
@@ -42,6 +43,6 @@ public final class BasicAuthentication implements AuthenticationScheme {
 
     @Override
     public String challenge() {
-        return "%s %s=\"%s\'".formatted(Http.Authentication.Basic, Http.Authentication.Realm, realm);
+        return "%s %s=\"%s\'".formatted(AuthenticationConstants.BASIC, AuthenticationConstants.REALM, realm);
     }
 }

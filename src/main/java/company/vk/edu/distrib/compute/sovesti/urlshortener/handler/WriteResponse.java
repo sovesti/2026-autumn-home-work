@@ -15,6 +15,8 @@ import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationEx
 import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationScheme;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ExchangeAttribute.BodyAttribute;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ExchangeAttribute.StatusAttribute;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.HeaderConstants;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
 
 public final class WriteResponse extends Filter {
 
@@ -22,6 +24,7 @@ public final class WriteResponse extends Filter {
     private final AuthenticationScheme authentication;
 
     public WriteResponse(AuthenticationScheme authentication) {
+        super();
         this.authentication = Objects.requireNonNull(authentication);
     }
 
@@ -36,22 +39,22 @@ public final class WriteResponse extends Filter {
             chain.doFilter(exchange);
         } catch (NoSuchElementException e) {
             logger.debug(e.getMessage(), e);
-            new Response(Http.StatusCode.NotFound).accept(exchange);
+            new Response(StatusCodeConstants.NOT_FOUND).accept(exchange);
         } catch (IllegalArgumentException | MalformedURLException e) {
             logger.debug(e.getMessage(), e);
-            new Response(Http.StatusCode.UnprocessableContent).accept(exchange);
+            new Response(StatusCodeConstants.UNPROCESSABLE_CONTENT).accept(exchange);
         } catch (AuthenticationException e) {
-            exchange.getResponseHeaders().add(Http.Header.Authenticate, authentication.challenge());
-            new Response(Http.StatusCode.Unathorized).accept(exchange);
+            exchange.getResponseHeaders().add(HeaderConstants.AUTHENTICATE, authentication.challenge());
+            new Response(StatusCodeConstants.UNATHORIZED).accept(exchange);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            new Response(Http.StatusCode.InternalError).accept(exchange);
+            new Response(StatusCodeConstants.INTERNAL_ERROR).accept(exchange);
         }
     }
 
     private void write(HttpExchange exchange, ExchangeAttributes atrributes) throws IOException {
         write(exchange, //
-            atrributes.find(new StatusAttribute()).orElse(Http.StatusCode.OK), //
+            atrributes.find(new StatusAttribute()).orElse(StatusCodeConstants.OK), //
             atrributes.find(new BodyAttribute()).orElseGet(ResponseBody.Empty::new));
     }
 

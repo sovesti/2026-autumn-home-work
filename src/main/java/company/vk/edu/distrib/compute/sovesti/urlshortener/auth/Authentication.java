@@ -9,11 +9,12 @@ import com.sun.net.httpserver.HttpExchange;
 
 import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationScheme.Credentials;
 
-public final class HttpAuthentication extends Filter {
+public final class Authentication extends Filter {
 
     private final AuthenticationScheme scheme;
 
-    public HttpAuthentication(AuthenticationScheme credentials) {
+    public Authentication(AuthenticationScheme credentials) {
+        super();
         this.scheme = Objects.requireNonNull(credentials);
     }
 

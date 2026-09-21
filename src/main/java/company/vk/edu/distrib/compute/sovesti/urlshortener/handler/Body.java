@@ -6,11 +6,11 @@ import java.util.Objects;
 
 import com.sun.net.httpserver.HttpExchange;
 
-public final class HttpBody {
+public final class Body {
 
     private final HttpExchange exchange;
 
-    public HttpBody(HttpExchange exchange) {
+    public Body(HttpExchange exchange) {
         this.exchange = Objects.requireNonNull(exchange);
     }
 

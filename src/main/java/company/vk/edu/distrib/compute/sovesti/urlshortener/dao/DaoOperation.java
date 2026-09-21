@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import company.vk.edu.distrib.compute.Dao;
 
-public interface DaoOperation {
+public sealed interface DaoOperation {
+
+    String UPSERT = "UPSERT";
+    String DELETE = "DELETE";
 
     String label();
 
     void execute(Dao<String> dao) throws IOException;
 
     String serialized();
-
-    String UPSERT = "UPSERT";
-    String DELETE = "DELETE";
 
     record Upsert(String key, String value) implements DaoOperation {
 
