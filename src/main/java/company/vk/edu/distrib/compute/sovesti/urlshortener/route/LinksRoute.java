@@ -8,9 +8,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import company.vk.edu.distrib.compute.Dao;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitch;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Body;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.PathElements;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitch;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Response;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ResponseBody;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.HeaderConstants;
@@ -91,7 +90,7 @@ public final class LinksRoute implements HttpRoute {
 
     @Override
     public void parsePath(HttpExchange exchange) {
-        new LinkId().put(new PathElements(prefix()).apply(exchange).findFirst(), exchange);
+        new LinkId().put(prefix(), exchange);
     }
 
 }

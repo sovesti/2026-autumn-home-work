@@ -7,7 +7,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import company.vk.edu.distrib.compute.Dao;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitch;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.PathElements;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Response;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.HeaderConstants;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.MethodConstants;
@@ -36,6 +35,6 @@ public final class RootRoute implements HttpRoute {
 
     @Override
     public void parsePath(HttpExchange exchange) {
-        new LinkId().put(new PathElements(prefix()).apply(exchange).findFirst(), exchange);
+        new LinkId().put(prefix(), exchange);
     }
 }
