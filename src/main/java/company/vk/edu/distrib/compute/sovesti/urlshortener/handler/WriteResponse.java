@@ -38,17 +38,29 @@ public final class WriteResponse extends Filter {
         try {
             chain.doFilter(exchange);
         } catch (NoSuchElementException e) {
-            logger.debug(e.getMessage(), e);
+            logExceptionDebug(e);
             new Response(StatusCodeConstants.NOT_FOUND).accept(exchange);
         } catch (IllegalArgumentException | MalformedURLException e) {
-            logger.debug(e.getMessage(), e);
+            logExceptionDebug(e);
             new Response(StatusCodeConstants.UNPROCESSABLE_CONTENT).accept(exchange);
         } catch (AuthenticationException e) {
             exchange.getResponseHeaders().add(HeaderConstants.AUTHENTICATE, authentication.challenge());
             new Response(StatusCodeConstants.UNATHORIZED).accept(exchange);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logExceptionError(e);
             new Response(StatusCodeConstants.INTERNAL_ERROR).accept(exchange);
+        }
+    }
+
+    private void logExceptionDebug(Exception ex) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(ex.getMessage(), ex);
+        }
+    }
+
+    private void logExceptionError(Exception ex) {
+        if (logger.isErrorEnabled()) {
+            logger.error(ex.getMessage(), ex);
         }
     }
 

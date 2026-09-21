@@ -1,5 +1,6 @@
 package company.vk.edu.distrib.compute.sovesti.urlshortener.route;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -18,7 +19,7 @@ final class HtmlUtf8 {
     }
 
     private String clean(String value) {
-        return value.replace(" ", "").toLowerCase();
+        return value.replace(" ", "").toLowerCase(Locale.getDefault());
     }
 
     void respond(HttpExchange exchange) {
