@@ -30,7 +30,6 @@ final class RandomId implements Supplier<String> {
         return alphanum.chars().anyMatch(valid -> character == valid);
     }
 
-
     private char randomChar() {
         return alphanum.charAt(random.nextInt(alphanum.length()));
     }

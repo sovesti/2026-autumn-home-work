@@ -36,5 +36,4 @@ public record Response(int code, ResponseBody body) implements Consumer<HttpExch
         attributes.put(new BodyAttribute(), body);
     }
 
-
 }
