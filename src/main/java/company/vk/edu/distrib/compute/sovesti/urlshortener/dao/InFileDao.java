@@ -2,6 +2,7 @@ package company.vk.edu.distrib.compute.sovesti.urlshortener.dao;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,9 +21,13 @@ public final class InFileDao implements Dao<String> {
 
     public InFileDao(Path path) throws IOException {
         this.path = Objects.requireNonNull(path);
-        write = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND), true);
+        write = new PrintWriter(open(path), true);
         operations = new DaoOperations();
         memory = new InMemoryDao<>();
+    }
+
+    private OutputStream open(Path path) throws IOException {
+        return Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
     public void read() throws IOException {

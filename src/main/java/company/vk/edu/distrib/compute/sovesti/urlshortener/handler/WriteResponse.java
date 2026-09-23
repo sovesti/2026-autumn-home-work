@@ -66,7 +66,7 @@ public final class WriteResponse extends Filter {
 
     private void write(HttpExchange exchange, ExchangeAttributes atrributes) throws IOException {
         write(exchange, //
-            atrributes.find(new StatusAttribute()).orElse(StatusCodeConstants.OK), //
+            atrributes.find(new StatusAttribute()).orElse(StatusCodeConstants.NOT_FOUND), //
             atrributes.find(new BodyAttribute()).orElseGet(ResponseBody.Empty::new));
     }
 

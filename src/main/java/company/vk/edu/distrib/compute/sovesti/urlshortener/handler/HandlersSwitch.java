@@ -10,6 +10,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.Request;
 
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
+
 public final class HandlersSwitch implements HttpHandler {
 
     private final Map<Predicate<Request>, HttpHandler> handlers = new ConcurrentHashMap<>();
@@ -30,7 +32,7 @@ public final class HandlersSwitch implements HttpHandler {
             .filter(entry -> entry.getKey().test(exchange))
             .map(Entry::getValue)
             .findFirst()
-            .get()
+            .orElseGet(() -> new Response(StatusCodeConstants.METHOD_NOT_ALLOWED))
             .handle(exchange);
     }
 
