@@ -1,6 +1,9 @@
 package company.vk.edu.distrib.compute.sovesti.urlshortener;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,9 +16,9 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
 import company.vk.edu.distrib.compute.Dao;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.BasicAuthentication;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationScheme;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.Authentication;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationScheme;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.BasicAuthentication;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.dao.InFileDao;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.WriteResponse;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.route.HttpRoute;
@@ -57,10 +60,14 @@ public final class VfedorovUrlShortenerService implements UrlShortenerService {
     }
 
     private Dao<String> createDao(String key) throws IOException {
-        InFileDao dao = new InFileDao(key);
+        InFileDao dao = new InFileDao(temporaryDirectory().resolve(key));
         dao.read();
         daos.add(dao);
         return dao;
+    }
+
+    private Path temporaryDirectory() throws IOException {
+        return Files.createDirectories(Paths.get(System.getProperty("java.io.tmpdir"), "vfedorov_urlshortener"));
     }
 
     private void createAuthenticatedContext(HttpRoute route, AuthenticationScheme authentication) {

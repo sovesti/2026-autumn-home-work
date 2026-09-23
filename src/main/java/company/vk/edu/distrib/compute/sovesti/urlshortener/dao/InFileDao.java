@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -21,13 +20,9 @@ public final class InFileDao implements Dao<String> {
 
     public InFileDao(Path path) throws IOException {
         this.path = Objects.requireNonNull(path);
-        write = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.APPEND), true);
+        write = new PrintWriter(Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND), true);
         operations = new DaoOperations();
         memory = new InMemoryDao<>();
-    }
-
-    public InFileDao(String path) throws IOException {
-        this(Paths.get(path));
     }
 
     public void read() throws IOException {
