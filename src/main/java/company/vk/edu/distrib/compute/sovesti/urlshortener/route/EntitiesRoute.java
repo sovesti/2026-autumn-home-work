@@ -31,21 +31,18 @@ public final class EntitiesRoute implements HttpRoute {
     }
 
     private void get(HttpExchange exchange) throws IOException {
-        new Response(StatusCodeConstants.OK, new ResponseBody.Plain(entities.get(id(exchange)))).accept(exchange);
+        new Response(StatusCodeConstants.OK, new ResponseBody.Plain(entities.get(new LinkId().find(exchange))))
+            .accept(exchange);
     }
 
     private void put(HttpExchange exchange) throws IOException {
-        entities.upsert(id(exchange), exchange.getRequestBody().readAllBytes());
+        entities.upsert(new LinkId().find(exchange), exchange.getRequestBody().readAllBytes());
         new Response(StatusCodeConstants.CREATED).accept(exchange);
     }
 
     private void delete(HttpExchange exchange) throws IOException {
-        entities.delete(id(exchange));
+        entities.delete(new LinkId().find(exchange));
         new Response(StatusCodeConstants.ACCEPTED).accept(exchange);
-    }
-
-    private String id(HttpExchange exchange) {
-        return new LinkId().find(exchange);
     }
 
     @Override
