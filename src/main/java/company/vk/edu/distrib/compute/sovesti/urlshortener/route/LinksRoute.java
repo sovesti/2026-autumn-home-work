@@ -13,7 +13,6 @@ import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitc
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Response;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ResponseBody;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.HeaderConstants;
-import company.vk.edu.distrib.compute.sovesti.urlshortener.http.MethodConstants;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
 
 public final class LinksRoute implements HttpRoute {
@@ -33,10 +32,10 @@ public final class LinksRoute implements HttpRoute {
     @Override
     public HttpHandler handler() {
         return new HandlersSwitch() //
-            .with(MethodConstants.POST, this::post) //
-            .with(MethodConstants.GET, this::get) //
-            .with(MethodConstants.PUT, this::put) //
-            .with(MethodConstants.DELETE, this::delete);
+            .withPost(this::post) //
+            .withGet(this::get) //
+            .withPut(this::put) //
+            .withDelete(this::delete);
     }
 
     private void post(HttpExchange exchange) throws IOException {
