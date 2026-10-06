@@ -54,12 +54,12 @@ public final class LinksRoute implements HttpRoute {
     private void put(HttpExchange exchange) throws IOException {
         new HtmlUtf8().orThrow(exchange);
         linkFromDao(exchange);
-        links.upsert(linkId(exchange), linkFromBody(exchange));
+        links.upsert(new LinkId().find(exchange), linkFromBody(exchange));
         new Response(StatusCodeConstants.OK).accept(exchange);
     }
 
     private void delete(HttpExchange exchange) throws IOException {
-        links.delete(linkId(exchange));
+        links.delete(new LinkId().find(exchange));
         new Response(StatusCodeConstants.ACCEPTED).accept(exchange);
     }
 
@@ -72,11 +72,7 @@ public final class LinksRoute implements HttpRoute {
     }
 
     private String linkFromDao(HttpExchange exchange) throws IOException {
-        return links.get(linkId(exchange));
-    }
-
-    private String linkId(HttpExchange exchange) {
-        return new LinkId().find(exchange);
+        return links.get(new LinkId().find(exchange));
     }
 
     @Override
