@@ -10,13 +10,11 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import company.vk.edu.distrib.compute.Dao;
-import company.vk.edu.distrib.compute.kv.KVService;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
 
-record RemoteDao(KVService delegate, int port, HttpClient client) implements Dao<byte[]> {
+record RemoteDao(int port, HttpClient client) implements Dao<byte[]> {
 
     RemoteDao {
-        Objects.requireNonNull(delegate);
         Objects.requireNonNull(port);
         Objects.requireNonNull(client);
     }
@@ -24,7 +22,6 @@ record RemoteDao(KVService delegate, int port, HttpClient client) implements Dao
     @Override
     public void close() throws IOException {
         client.close();
-        delegate.stop();
     }
 
     @Override
