@@ -14,7 +14,7 @@ import company.vk.edu.distrib.compute.Dao;
 public final class Daos<T> implements Closeable {
 
     private final DaoFactory<T> factory;
-    private final Map<String, Dao<T>> daos = new ConcurrentHashMap<>();
+    private final Map<String, Dao<T>> created = new ConcurrentHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public Daos(DaoFactory<T> factory) {
@@ -22,11 +22,11 @@ public final class Daos<T> implements Closeable {
     }
 
     public Dao<T> getOrCreate(String key) {
-        return daos.computeIfAbsent(key, this::tryCreate);
+        return created.computeIfAbsent(key, this::tryCreate);
     }
 
     public Dao<T> put(String key, Dao<T> dao) {
-        return daos.put(key, dao);
+        return created.put(key, dao);
     }
 
     private Dao<T> tryCreate(String key) {
@@ -39,7 +39,7 @@ public final class Daos<T> implements Closeable {
 
     @Override
     public void close() {
-        daos.values().forEach(this::closeDao);
+        created.values().forEach(this::closeDao);
     }
 
     private void closeDao(Dao<?> dao) {
