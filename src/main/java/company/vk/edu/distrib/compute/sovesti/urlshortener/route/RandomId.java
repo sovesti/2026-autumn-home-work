@@ -19,7 +19,7 @@ final class RandomId implements Supplier<String> {
     }
 
     String throwIfInvalid(String id) {
-        if (SIZE != id.length() || !id.chars().allMatch(this::valid)) {
+        if (id.isEmpty() || !id.chars().allMatch(this::valid)) {
             throw new IllegalArgumentException("Invalid id: %s".formatted(id));
         }
         return id;
