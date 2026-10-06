@@ -40,7 +40,7 @@ public final class WriteResponse extends Filter {
         } catch (NoSuchElementException e) {
             logExceptionDebug(e);
             new Response(StatusCodeConstants.NOT_FOUND).accept(exchange);
-        } catch (UnknownPathException e) {
+        } catch (BadRequestException e) {
             new Response(StatusCodeConstants.BAD_REQUEST).accept(exchange);
         } catch (IllegalArgumentException | MalformedURLException e) {
             logExceptionDebug(e);
