@@ -1,0 +1,68 @@
+package company.vk.edu.distrib.compute.sovesti.urlshortener.route;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
+import company.vk.edu.distrib.compute.Dao;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitch;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Response;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ResponseBody;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.UnknownPathException;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
+
+public final class EntitiesRoute implements HttpRoute {
+
+    private final Dao<byte[]> entities;
+
+    public EntitiesRoute(Dao<byte[]> entities) {
+        this.entities = Objects.requireNonNull(entities);
+    }
+
+    @Override
+    public String prefix() {
+        return "/v0/entity";
+    }
+
+    @Override
+    public HttpHandler handler() {
+        return new HandlersSwitch().withGet(this::get).withPut(this::put).withDelete(this::delete);
+    }
+
+    private void get(HttpExchange exchange) throws IOException {
+        new Response(StatusCodeConstants.OK, new ResponseBody.Plain(entities.get(id(exchange)))).accept(exchange);
+    }
+
+    private void put(HttpExchange exchange) throws IOException {
+        entities.upsert(id(exchange), exchange.getRequestBody().readAllBytes());
+        new Response(StatusCodeConstants.CREATED).accept(exchange);
+    }
+
+    private void delete(HttpExchange exchange) throws IOException {
+        entities.delete(id(exchange));
+        new Response(StatusCodeConstants.ACCEPTED).accept(exchange);
+    }
+
+    private String id(HttpExchange exchange) {
+        checkIdNotEmpty(exchange);
+        return new LinkId().find(exchange);
+    }
+
+    @Override
+    public void parsePath(HttpExchange exchange) {
+        new LinkId().put(prefix(), exchange);
+    }
+
+    private void checkIdNotEmpty(HttpExchange exchange) {
+        checkIdNotEmpty(exchange.getRequestURI().getPath());
+    }
+
+    private void checkIdNotEmpty(String path) {
+        if (path.endsWith("/")) {
+            throw new UnknownPathException(path);
+        }
+    }
+
+}
