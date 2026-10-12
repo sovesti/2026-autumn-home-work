@@ -16,17 +16,19 @@ import company.vk.edu.distrib.compute.sovesti.urlshortener.route.StatusRoute;
 
 public final class VfedorovKVService implements KVService {
 
+    private final int id;
     private final HttpServer server;
     private final Daos<byte[]> daos;
 
-    public VfedorovKVService(HttpServer server) {
+    public VfedorovKVService(int id, HttpServer server) {
+        this.id = Objects.requireNonNull(id);
         this.server = Objects.requireNonNull(server);
         this.daos = new Daos<>(new InFileDaoFactory());
     }
 
     @Override
     public void start() {
-        Dao<byte[]> entities = daos.getOrCreate("entities");
+        Dao<byte[]> entities = daos.getOrCreate("entities-%d".formatted(id));
         HttpContexts contexts = new HttpContexts(server, new AuthenticationScheme.Transient());
         contexts.create(new StatusRoute());
         contexts.create(new EntitiesRoute(entities));
