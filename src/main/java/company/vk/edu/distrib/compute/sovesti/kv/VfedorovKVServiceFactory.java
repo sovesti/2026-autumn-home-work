@@ -13,7 +13,7 @@ public final class VfedorovKVServiceFactory extends AbstractHttpServiceFactory<V
 
     @Override
     protected VfedorovKVService doCreate(int port) throws IOException {
-        return new VfedorovKVService(HttpServer.create(new InetSocketAddress(port), 0));
+        return new VfedorovKVService(port, HttpServer.create(new InetSocketAddress(port), 0));
     }
 
 }
