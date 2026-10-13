@@ -15,6 +15,7 @@ public final class VfedorovKVServiceFactory extends AbstractHttpServiceFactory<V
     private final DaoFactory<byte[]> factory;
 
     public VfedorovKVServiceFactory(DaoFactory<byte[]> factory) {
+        super();
         this.factory = Objects.requireNonNull(factory);
     }
 
