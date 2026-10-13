@@ -20,7 +20,7 @@ public final class VfedorovKVService implements KVService {
     private final Daos<byte[]> daos;
 
     public VfedorovKVService(int id, HttpServer server, DaoFactory<byte[]> factory) {
-        this.id = Objects.requireNonNull(id);
+        this.id = id;
         this.server = Objects.requireNonNull(server);
         this.daos = new Daos<>(factory);
     }
