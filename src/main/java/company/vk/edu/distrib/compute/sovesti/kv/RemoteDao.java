@@ -10,6 +10,8 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import company.vk.edu.distrib.compute.Dao;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.auth.AuthenticationException;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.BadRequestException;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.http.StatusCodeConstants;
 
 record RemoteDao(int port, HttpClient client) implements Dao<byte[]> {
@@ -26,7 +28,7 @@ record RemoteDao(int port, HttpClient client) implements Dao<byte[]> {
 
     @Override
     public byte[] get(String key) throws NoSuchElementException, IllegalArgumentException, IOException {
-        return responseBody(key, send(key, request(key).GET().build()));
+        return send(key, request(key).GET().build());
     }
 
     @Override
@@ -39,18 +41,23 @@ record RemoteDao(int port, HttpClient client) implements Dao<byte[]> {
         send(key, request(key).DELETE().build());
     }
 
-    private HttpResponse<byte[]> send(String key, HttpRequest request) throws IOException {
+    private byte[] send(String key, HttpRequest request) throws IOException {
         try {
-            return client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            return checkCode(key, client.send(request, HttpResponse.BodyHandlers.ofByteArray()));
         } catch (InterruptedException e) {
             throw new IOException(failed(key), e);
         }
     }
 
-    private byte[] responseBody(String key, HttpResponse<byte[]> response) throws IOException {
+    private byte[] checkCode(String key, HttpResponse<byte[]> response) throws IOException {
         return switch (response.statusCode()) {
             case StatusCodeConstants.OK -> response.body();
+            case StatusCodeConstants.CREATED -> response.body();
+            case StatusCodeConstants.ACCEPTED -> response.body();
             case StatusCodeConstants.NOT_FOUND -> throw new NoSuchElementException(failed(key));
+            case StatusCodeConstants.BAD_REQUEST -> throw new BadRequestException(failed(key));
+            case StatusCodeConstants.UNPROCESSABLE_CONTENT -> throw new IllegalArgumentException(failed(key));
+            case StatusCodeConstants.UNATHORIZED -> throw new AuthenticationException();
             default -> throw new IOException(failed(key));
         };
     }
