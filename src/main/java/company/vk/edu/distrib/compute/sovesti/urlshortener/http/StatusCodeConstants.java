@@ -12,5 +12,6 @@ public final class StatusCodeConstants {
     public static final int METHOD_NOT_ALLOWED = 405;
     public static final int UNPROCESSABLE_CONTENT = 422;
     public static final int INTERNAL_ERROR = 500;
+    public static final int SERVICE_UNAVAILABLE = 503;
 
 }

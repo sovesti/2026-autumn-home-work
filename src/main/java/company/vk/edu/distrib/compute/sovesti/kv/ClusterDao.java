@@ -1,7 +1,5 @@
 package company.vk.edu.distrib.compute.sovesti.kv;
 
-import static java.util.stream.Collectors.maxBy;
-
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import company.vk.edu.distrib.compute.Dao;
 
@@ -45,12 +44,11 @@ final class ClusterDao implements Dao<byte[]> {
     }
 
     private Dao<byte[]> rendezvouz(String key) {
-        return daos.entrySet()
-            .stream()
-            .map(Shard::new)
-            .collect(maxBy(shardComparator(key)))
-            .orElseThrow(() -> new IllegalStateException("DAO cluster is empty"))
-            .dao();
+        return shards(key).findFirst().orElseThrow(() -> new IllegalStateException("DAO cluster is empty"));
+    }
+
+    Stream<Dao<byte[]>> shards(String key) {
+        return daos.entrySet().stream().map(Shard::new).sorted(shardComparator(key).reversed()).map(Shard::dao);
     }
 
     private Comparator<Shard> shardComparator(String key) {
