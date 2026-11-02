@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sun.net.httpserver.HttpExchange;
 
 import company.vk.edu.distrib.compute.Dao;
@@ -41,7 +44,7 @@ public record CoordinatedClusterDao(ClusterDao cluster, HttpExchange exchange) i
         shards(key).forEach(shard -> state.tryRun(shard, operation, factor() - ack()));
     }
 
-    private List<Dao<byte[]>> shards(String key) {
+    private List<Shard> shards(String key) {
         return cluster.shards(key).limit(factor()).toList();
     }
 
@@ -54,22 +57,23 @@ public record CoordinatedClusterDao(ClusterDao cluster, HttpExchange exchange) i
     }
 
     private final class CoordinationState {
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private int failures;
         private final List<byte[]> values = new ArrayList<>();
 
-        private void tryRun(Dao<byte[]> shard, Operation operation, int threshold) {
+        private void tryRun(Shard shard, Operation operation, int threshold) {
             try {
-                operation.run(shard);
+                operation.run(shard.dao());
             } catch (Exception e) {
                 failure(threshold);
             }
         }
 
-        private void tryRetrieve(Dao<byte[]> shard, String key, int threshold) {
+        private void tryRetrieve(Shard shard, String key, int threshold) {
             try {
-                values.add(shard.get(key));
+                values.add(shard.dao().get(key));
             } catch (NoSuchElementException e) {
-                return;
+                log.debug("{} not found on {}", key, shard.key());
             } catch (Exception e) {
                 failure(threshold);
             }
