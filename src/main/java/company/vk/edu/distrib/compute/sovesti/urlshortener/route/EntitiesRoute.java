@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import company.vk.edu.distrib.compute.Dao;
+import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ExchangeAttributes;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.HandlersSwitch;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.Response;
 import company.vk.edu.distrib.compute.sovesti.urlshortener.handler.ResponseBody;
@@ -43,7 +44,14 @@ public final class EntitiesRoute implements HttpRoute {
 
     private void delete(HttpExchange exchange) throws IOException {
         entities.apply(exchange).delete(new LinkId().find(exchange));
-        new Response(StatusCodeConstants.ACCEPTED).accept(exchange);
+        new Response(deleteStatus(exchange)).accept(exchange);
+    }
+
+    private int deleteStatus(HttpExchange exchange) {
+        if (new ExchangeAttributes(exchange).find(new RequestAck()).isPresent()) {
+            return StatusCodeConstants.OK;
+        }
+        return StatusCodeConstants.ACCEPTED;
     }
 
     @Override
