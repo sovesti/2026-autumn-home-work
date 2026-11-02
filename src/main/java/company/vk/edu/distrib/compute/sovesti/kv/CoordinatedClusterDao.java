@@ -73,7 +73,9 @@ public record CoordinatedClusterDao(ClusterDao cluster, HttpExchange exchange) i
             try {
                 values.add(shard.dao().get(key));
             } catch (NoSuchElementException e) {
-                log.debug("{} not found on {}", key, shard.key());
+                if (log.isDebugEnabled()) {
+                    log.debug("{} not found on {}", key, shard.key());
+                }
             } catch (Exception e) {
                 failure(threshold);
             }
