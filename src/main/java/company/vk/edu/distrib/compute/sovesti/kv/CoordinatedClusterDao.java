@@ -61,23 +61,22 @@ public record CoordinatedClusterDao(ClusterDao cluster, HttpExchange exchange) i
             try {
                 operation.run(shard);
             } catch (Exception e) {
-                failures++;
+                failure(threshold);
             }
-            checkFailed(threshold);
         }
 
         private void tryRetrieve(Dao<byte[]> shard, String key, int threshold) {
             try {
                 values.add(shard.get(key));
             } catch (NoSuchElementException e) {
-                // ignore
+                return;
             } catch (Exception e) {
-                failures++;
+                failure(threshold);
             }
-            checkFailed(threshold);
         }
 
-        private void checkFailed(int threshold) {
+        private void failure(int threshold) {
+            failures++;
             if (failures > threshold) {
                 throw new ServiceUnavailableException();
             }
