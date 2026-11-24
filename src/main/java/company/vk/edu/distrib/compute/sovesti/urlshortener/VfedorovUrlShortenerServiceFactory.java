@@ -13,7 +13,7 @@ public final class VfedorovUrlShortenerServiceFactory extends AbstractHttpServic
 
     @Override
     protected VfedorovUrlShortenerService doCreate(int port) throws IOException {
-        return new VfedorovUrlShortenerService(new HttpServers().create(port));
+        return new VfedorovUrlShortenerService(new HttpServers().create(port), port);
     }
 
 }
