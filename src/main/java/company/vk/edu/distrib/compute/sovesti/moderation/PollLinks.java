@@ -45,7 +45,9 @@ final class PollLinks implements Runnable {
     }
 
     private void recordError(String key, String value, Exception exception) {
-        logger.error("Incorrect URL: %s".formatted(value), exception);
+        if (logger.isErrorEnabled()) {
+            logger.error("Incorrect URL: %s".formatted(value), exception);
+        }
         new DeadLetter(kafka.dlt()).send(key, value.getBytes(), exception.getMessage());
     }
 
